@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="image/png" href="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<title>Iridiumite</title>
+<style>
+  :root {
+    --bg: #0e1014; --panel: #161922; --panel-2: #1d2230;
+    --border: #262b3a; --text: #e6e9f2; --text-dim: #9aa0b4;
+    --accent: #6aa6ff; --accent-2: #8d7bff;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    height: 100%; margin: 0;
+    background: var(--bg); color: var(--text);
+    font-size: 14px; overflow: hidden;
+  }
+  button { font-family: inherit; }
+
+  .os {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    grid-template-rows: 38px 1fr 24px;
+    grid-template-areas: "topbar topbar" "sidebar main" "status status";
+    height: 100vh; width: 100vw;
+  }
+
+  .topbar {
+    grid-area: topbar;
+    background: linear-gradient(180deg, #1a1f2c, #141822);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 14px; gap: 10px;
+    user-select: none;
+  }
+  .logo {
+    font-weight: 700; letter-spacing: 0.5px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .topbar .current-app { color: var(--text-dim); font-size: 12px; }
+  .topbar .clock { margin-left: auto; color: var(--text-dim); font-variant-numeric: tabular-nums; font-size: 12px; }
+
+  .sidebar {
+    grid-area: sidebar; background: var(--panel);
+    border-right: 1px solid var(--border);
+    overflow-y: auto; padding: 10px 8px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .sidebar h2 {
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-dim); margin: 12px 8px 6px; font-weight: 600;
+  }
+  .nav-btn {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; background: transparent;
+    border: 1px solid transparent; border-radius: 8px;
+    color: var(--text); cursor: pointer; text-align: left; width: 100%;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .nav-btn:hover { background: var(--panel-2); }
+  .nav-btn.active {
+    background: linear-gradient(90deg, rgba(106,166,255,0.16), rgba(141,123,255,0.10));
+    border-color: rgba(106,166,255,0.35);
+  }
+  .nav-btn .icon { width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; color: var(--accent); flex-shrink: 0; }
+  .nav-btn .icon svg { width: 16px; height: 16px; }
+  .nav-btn .label { font-size: 13px; }
+
+  .main { grid-area: main; position: relative; background: var(--bg); overflow: hidden; }
+  .slot { position: absolute; inset: 0; display: none; }
+  .slot.active { display: block; }
+  #iframe-slot iframe { width: 100%; height: 100%; border: 0; background: #fff; display: block; }
+  #direct-slot { overflow: auto; padding: 24px 28px; }
+
+  .empty {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-dim); font-size: 13px;
+  }
+
+  .statusbar {
+    grid-area: status; background: var(--panel);
+    border-top: 1px solid var(--border); color: var(--text-dim);
+    font-size: 11px; display: flex; align-items: center;
+    padding: 0 12px; gap: 14px; user-select: none;
+  }
+  .statusbar .pill {
+    padding: 1px 7px; background: var(--panel-2);
+    border: 1px solid var(--border); border-radius: 10px;
+    color: var(--text); font-size: 10px;
+  }
+
+  .settings-page h1 { margin: 0 0 4px; font-size: 22px; }
+  .settings-page .sub { color: var(--text-dim); margin-bottom: 22px; font-size: 13px; }
+  .settings-section {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 20px; margin-bottom: 16px;
+  }
+  .settings-section h2 { margin: 0 0 4px; font-size: 14px; letter-spacing: 0.3px; }
+  .settings-section p.desc { margin: 0 0 14px; color: var(--text-dim); font-size: 12.5px; line-height: 1.5; }
+  .mode-options { display: flex; gap: 10px; flex-wrap: wrap; }
+  .mode-card {
+    flex: 1 1 240px; background: var(--panel-2);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px; cursor: pointer;
+    transition: border-color 0.12s, transform 0.12s;
+  }
+  .mode-card:hover { transform: translateY(-1px); }
+  .mode-card.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(106,166,255,0.4) inset;
+  }
+  .mode-card .name { font-weight: 600; margin-bottom: 4px; }
+  .mode-card .small { font-size: 11.5px; color: var(--text-dim); line-height: 1.45; }
+  .mode-card code { color: #ffd28a; }
+  .meta { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; font-size: 12.5px; }
+  .meta dt { color: var(--text-dim); }
+  .meta dd { margin: 0; }
+  .meta dd code { background: var(--panel-2); padding: 1px 6px; border-radius: 4px; font-size: 11.5px; }
+  .module-list { display: flex; flex-direction: column; gap: 6px; }
+  .module-row {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--panel-2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px; font-size: 12.5px;
+  }
+  .module-row .id-tag { color: var(--text-dim); font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11px; }
+  .badge { font-size: 10px; padding: 2px 6px; border-radius: 6px; border: 1px solid var(--border); color: var(--text-dim); }
+  .badge.iframe { color: var(--accent); border-color: rgba(106,166,255,0.4); }
+  .badge.direct { color: var(--accent-2); border-color: rgba(141,123,255,0.4); }
+  .badge.bad { color: #ff6b6b; border-color: rgba(255, 57, 57, 0.4);}
+</style>
+</head>
+<body>
+
+<div class="os">
+  <header class="topbar">
+    <span class="logo">Iridiumite</span>
+    <span class="current-app" id="current-app">— no module —</span>
+    <span class="clock" id="clock"></span>
+  </header>
+
+  <nav class="sidebar" id="sidebar">
+    <h2>Modules</h2>
+  </nav>
+
+  <section class="main">
+    <div class="empty" id="empty-state">Select a module from the sidebar</div>
+    <div class="slot" id="iframe-slot">
+      <iframe id="tool-frame"></iframe>
+    </div>
+    <div class="slot" id="direct-slot"></div>
+  </section>
+
+  <footer class="statusbar">
+    <span>Loading mode:</span>
+    <span class="pill" id="mode-pill">blob:</span>
+    <span style="margin-left:auto" id="status-msg">Ready</span>
+  </footer>
+</div>
+
+<script>
+/* =====================================================================
+   Iridiumite — modular HTML "operating system"
+   --------------------------------------------------------------------
+   To add a tool: append an entry to MODULES below.
+
+   Each module:
+     id    - unique string id
+     name  - shown in the sidebar
+     icon  - (optional) inline SVG markup
+     type  - 'iframe' (default) | 'direct'
+              'iframe' = rendered inside the sandboxed tool iframe.
+                         Loaded via the user-selected method (blob | about:blank).
+              'direct' = rendered directly in the OS DOM (NOT an iframe).
+                         Use this when the module needs to talk to the host
+                         OS — e.g. Settings. Its <script> tags run in the
+                         OS context and can use the global `OS` API.
+     html  - the module's full HTML/JS/CSS as a string.
+   ===================================================================== */
+
+const MODULES = [
+
+{
+  id: "home",
+  name: "Home",
+  type: "direct",
+  icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 10.5L12 3l9 7.5"></path>
+        <path d="M5 10v10h14V10"></path>
+        </svg>`,
+
+  html: `<h1>Welcome to <span class="logo">Iridiumite</span>!</h1><p>Try clicking on one of the modules on the side</p>
+`
+},
+
+  /* ---- SETTINGS (direct, has OS access) ---------------------------- */
+  {
+    id: 'settings',
+    name: 'Settings',
+    type: 'direct',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+    html: `
+<div class="settings-page">
+  <h1>Settings</h1>
+  <div class="settings-section">
+    <h2>Module loading mode</h2>
+    <p class="desc">
+      How the OS injects HTML into the tool iframe.
+    </p>
+    <div class="mode-options" id="mode-options">
+      <div class="mode-card" data-mode="blob">
+        <div class="name">Blob URI</div>
+        <div class="small">Builds a <code>Blob</code> from the module HTML and sets <code>iframe.src</code> to the resulting <code>blob:</code> URL. Each module gets its own opaque origin.</div>
+      </div>
+      <div class="mode-card" data-mode="about:blank">
+        <div class="name">about:blank</div>
+        <div class="small">Sets <code>iframe.src = "about:blank"</code>, then opens the contentDocument and <code>document.write()</code>'s the module HTML into it.</div>
+      </div>
+      <div class="mode-card" data-mode="srcdoc">
+        <div class="name">Edit srcdoc</div>
+        <div class="small">Sets <code>iframe.srcdoc</code> to the module's HTML.</div>
+      </div>
+      <div class="mode-card" data-mode="inject">
+        <div class="name">Inject the html into a <code>&lt;div&gt;</code>, but separate the DOM.</div><span class="badge bad">Not Recommended</span>
+        <div class="small">Sets <code>div.innerHTML</code> to the module's HTML, and separates the DOM.</div>
+      </div>
+      <div class="mode-card" data-mode="raw">
+        <div class="name">Inject the html into a <code>&lt;div&gt;</code></div><span class="badge bad">VERY VERY Not Recommended, do not use unless nothing else works</span>
+        <div class="small">Sets <code>div.innerHTML</code> to the module's HTML.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var page = document.querySelector('.settings-page');
+    var modeOptions = page.querySelector('#mode-options');
+    var moduleList  = page.querySelector('#module-list');
+
+    function paint() {
+      var mode = OS.getLoadingMode();
+      modeOptions.querySelectorAll('.mode-card').forEach(function (c) {
+        c.classList.toggle('selected', c.dataset.mode === mode);
+      });
+    }
+
+    modeOptions.addEventListener('click', function (e) {
+      var card = e.target.closest('.mode-card');
+      if (!card) return;
+      OS.setLoadingMode(card.dataset.mode);
+      paint();
+    });
+
+    /*OS.listModules().forEach(function (m) {
+      var row = document.createElement('div');
+      row.className = 'module-row';
+      row.innerHTML =
+        '<div><b>' + m.name + '</b> ' +
+        '<span class="id-tag">id: ' + m.id + '</span></div>' +
+        '<span class="badge ' + m.type + '">' + m.type + '</span>';
+      moduleList.appendChild(row);
+    });*/
+
+    paint();
+  })();
+<\/script>
+`
+  },
+
+  /* ---- CALCULATOR (iframe) ---------------------------------------- */
+  {
+    id: 'calculator',
+    name: 'Calculator',
+    type: 'iframe',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg>',
+    html: `<!doctype html><html><head><meta charset="utf-8"><title>Calculator</title>
+<style>
+  body{margin:0;background:#1a1d27;color:#eee;
+       display:flex;align-items:center;justify-content:center;height:100vh}
+  .calc{background:#13161e;padding:18px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.4);width:280px}
+  .display{background:#0c0e14;border-radius:8px;padding:14px;text-align:right;font-size:28px;
+           min-height:40px;margin-bottom:12px;font-variant-numeric:tabular-nums;overflow-x:auto;white-space:nowrap}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  button{padding:14px;font-size:16px;border:0;border-radius:8px;background:#262b39;color:#eee;cursor:pointer;transition:background .1s}
+  button:hover{background:#323849}
+  button.op{background:#3a3f55;color:#8da7ff}
+  button.eq{background:#5a7de8;color:#fff;grid-column:span 2}
+  button.clear{background:#5a3636;color:#ff8b8b}
+</style></head><body>
+<div class="calc">
+  <div class="display" id="d">0</div>
+  <div class="grid">
+    <button class="clear" data-k="C">C</button>
+    <button data-k="(">(</button>
+    <button data-k=")">)</button>
+    <button class="op" data-k="/">÷</button>
+    <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+    <button class="op" data-k="*">×</button>
+    <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+    <button class="op" data-k="-">−</button>
+    <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+    <button class="op" data-k="+">+</button>
+    <button data-k="0">0</button><button data-k=".">.</button>
+    <button class="eq" data-k="=">=</button>
+  </div>
+</div>
+<script>
+  var buf='';var d=document.getElementById('d');
+  document.querySelectorAll('button').forEach(function(b){
+    b.addEventListener('click',function(){
+      var k=b.dataset.k;
+      if(k==='C'){buf='';d.textContent='0';return;}
+      if(k==='='){
+        try{
+          if(!/^[\\d+\\-*/().\\s]+$/.test(buf))throw 0;
+          buf=String(Function('"use strict";return ('+buf+')')());
+          d.textContent=buf;
+        }catch(e){d.textContent='Error';buf='';}
+        return;
+      }
+      buf+=k;d.textContent=buf;
+    });
+  });
+<\/script></body></html>`
+  },
+
+  /* ---- NOTEPAD (iframe) ------------------------------------------- */
+  {
+    id: 'notepad',
+    name: 'Notepad',
+    type: 'iframe',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="14 3 14 9 20 9"/></svg>',
+    html: `<!doctype html><html><head><meta charset="utf-8"><title>Notepad</title>
+<style>
+  html,body{margin:0;height:100%;font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#fafaf7;color:#222}
+  .bar{background:#fff;border-bottom:1px solid #ddd;padding:8px 12px;display:flex;gap:8px;align-items:center}
+  .bar input{padding:4px 8px;border:1px solid #ddd;border-radius:4px;font-size:13px}
+  .bar button{padding:4px 10px;background:#3a76f0;color:#fff;border:0;border-radius:4px;cursor:pointer;font-size:13px}
+  .bar button:hover{background:#2c66d8}
+  .bar .info{color:#888;font-size:12px;margin-left:auto}
+  textarea{width:100%;height:calc(100% - 41px);border:0;padding:14px 18px;font-family:ui-monospace,Menlo,monospace;font-size:14px;line-height:1.55;resize:none;outline:none;background:transparent}
+</style></head><body>
+<div class="bar">
+  <input id="title" placeholder="Untitled" />
+  <button id="save">Save .txt</button>
+  <span class="info" id="info"></span>
+</div>
+<textarea id="ta" placeholder="Start typing..."></textarea>
+<script>
+  var ta=document.getElementById('ta'),title=document.getElementById('title'),info=document.getElementById('info');
+  function u(){var t=ta.value;info.textContent=t.length+' chars · '+(t.trim()?t.trim().split(/\\s+/).length:0)+' words'}
+  ta.addEventListener('input',u);u();
+  document.getElementById('save').addEventListener('click',function(){
+    var blob=new Blob([ta.value],{type:'text/plain'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download=(title.value||'note')+'.txt';a.click();
+  });
+<\/script></body></html>`
+  }];
+
+/* =====================================================================
+   OS runtime
+   ===================================================================== */
+const OS = (function () {
+  var STORAGE_KEY = 'iridiumite.loadingMode';
+  var VALID_MODES = ['blob', 'about:blank', 'srcdoc', 'inject', 'raw'];
+
+  var loadingMode = localStorage.getItem(STORAGE_KEY);
+  if (VALID_MODES.indexOf(loadingMode) === -1) loadingMode = 'blob';
+
+  var activeId = null;
+  var lastBlobUrl = null;
+
+  var sidebarEl  = document.getElementById('sidebar');
+  var iframe     = document.getElementById('tool-frame');
+  var iframeSlot = document.getElementById('iframe-slot');
+  var directSlot = document.getElementById('direct-slot');
+  var emptyState = document.getElementById('empty-state');
+  var currentApp = document.getElementById('current-app');
+  var modePill   = document.getElementById('mode-pill');
+  var statusMsg  = document.getElementById('status-msg');
+  var clockEl    = document.getElementById('clock');
+
+  function defaultIcon() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>';
+  }
+
+  function buildSidebar() {
+    MODULES.forEach(function (mod) {
+      var btn = document.createElement('button');
+      btn.className = 'nav-btn';
+      btn.dataset.id = mod.id;
+      btn.innerHTML =
+        '<span class="icon">' + (mod.icon || defaultIcon()) + '</span>' +
+        '<span class="label">' + mod.name + '</span>';
+      btn.addEventListener('click', function () { openModule(mod.id); });
+      sidebarEl.appendChild(btn);
+    });
+  }
+
+  function setActiveButton(id) {
+    sidebarEl.querySelectorAll('.nav-btn').forEach(function (b) {
+      b.classList.toggle('active', b.dataset.id === id);
+    });
+  }
+
+  function loadIframeBlob(html) {
+    if (lastBlobUrl) { URL.revokeObjectURL(lastBlobUrl); lastBlobUrl = null; }
+    var blob = new Blob([html], { type: 'text/html' });
+    lastBlobUrl = URL.createObjectURL(blob);
+    var newIframe = document.createElement("iframe");
+    newIframe.src = lastBlobUrl;
+
+    iframe.replaceWith(newIframe);
+    iframe = newIframe;
+  }
+
+  function loadIframeAboutBlank(html) {
+    var newIframe = document.createElement("iframe");
+    newIframe.src = "about:blank";
+    newIframe.id = "tool-frame";
+
+    var onLoad = function () {
+      newIframe.removeEventListener('load', onLoad);
+      try {
+        var doc = newIframe.contentDocument;
+        doc.open(); doc.write(html); doc.close();
+        console.error('about:blank write success');
+        statusMsg.textContent = 'about:blank write success';
+      } catch (err) {
+        console.error('about:blank write failed', err);
+        statusMsg.textContent = 'about:blank write failed: ' + err.message;
+      }
+    };
+    newIframe.addEventListener('load', onLoad);
+    iframe.replaceWith(newIframe);
+    iframe = newIframe;
+}
+
+  function loadIframeSrcdoc(html) {
+    var newIframe = document.createElement("iframe");
+    newIframe.srcdoc = html;
+
+    iframe.replaceWith(newIframe);
+    iframe = newIframe;
+  }
+
+  function loadDirectUnsandboxed(html){
+      var range = document.createRange();
+      range.selectNode(directSlot);
+      directSlot.appendChild(range.createContextualFragment(html));
+      showSlot('direct');
+  }
+  function loadDirect(html, id) {
+    const host = document.createElement("div");
+    host.className = "module-root";
+    host.dataset.module = id;
+
+    const shadow = host.attachShadow({ mode: "open" });
+    shadow.innerHTML = html;
+
+    directSlot.innerHTML = "";
+    directSlot.appendChild(host);
+
+    showSlot("direct");
+  }
+
+  function showSlot(which) {
+    emptyState.style.display = which ? 'none' : 'flex';
+    iframeSlot.classList.toggle('active', which === 'iframe');
+    directSlot.classList.toggle('active', which === 'direct');
+  }
+
+  function openModule(id) {
+    var mod = MODULES.find(function (m) { return m.id === id; });
+    if (!mod) return;
+    activeId = id;
+    setActiveButton(id);
+    currentApp.textContent = mod.name;
+
+    if (mod.type === 'direct') {
+      if (lastBlobUrl) { URL.revokeObjectURL(lastBlobUrl); lastBlobUrl = null; }
+      iframe.removeAttribute('src');
+      directSlot.innerHTML = '';
+      // createContextualFragment causes <script> tags inside mod.html to execute
+      loadDirectUnsandboxed(mod.html);
+      statusMsg.textContent = 'Loaded "' + mod.name + '" (direct)';
+    } else {
+      directSlot.innerHTML = '';
+      showSlot('iframe');
+      if (loadingMode === 'blob') loadIframeBlob(mod.html);
+      else if (loadingMode === 'about:blank') loadIframeAboutBlank(mod.html);
+      else if (loadingMode === 'srcdoc') loadIframeSrcdoc(mod.html);
+      else if (loadingMode === 'inject') loadDirect(mod.html, id);
+      else if (loadingMode === 'raw') loadDirectUnsandboxed(mod.html);
+      else console.log("If you see this, pls tell the devs that loadingMode is set to something wrong.")
+      statusMsg.textContent = 'Loaded "' + mod.name + '" via ' + loadingMode;
+    }
+  }
+
+  function setLoadingMode(m) {
+    if (VALID_MODES.indexOf(m) === -1) return;
+    loadingMode = m;
+    localStorage.setItem(STORAGE_KEY, m);
+    modePill.textContent = m
+    statusMsg.textContent = 'Loading mode → ' + m;
+  }
+  function getLoadingMode() { return loadingMode; }
+  function listModules() {
+    return MODULES.map(function (m) {
+      return { id: m.id, name: m.name, type: m.type || 'iframe' };
+    });
+  }
+
+
+  function init() {
+    buildSidebar();
+    modePill.textContent = loadingMode
+    if (MODULES.length) openModule(MODULES[0].id);
+  }
+
+  return { init: init, setLoadingMode: setLoadingMode, getLoadingMode: getLoadingMode,
+           listModules: listModules, openModule: openModule };
+})();
+
+window.OS = OS;
+OS.init();
+</script>
+</body>
+</html>
