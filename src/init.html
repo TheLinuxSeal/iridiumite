@@ -11,47 +11,19 @@
         <option value="console">Open Console</option>
     </select><br>
     <select id="iridiumiteinit-045a8ba2-jsd" style="display:none">
-        <option value="https://cdn.jsdelivr.net/gh/TheLinuxSeal/iridiumite@releases/1.0.0/main.html">
-            Example jsDelivr
-        </option>
+        <option value="https://cdn.jsdelivr.net/gh/TheLinuxSeal/iridiumite@releases/1.0.0/main.html">Iridiumite v1.0.0</option>
     </select>
     <select id="iridiumiteinit-045a8ba2-gh" style="display:none">
-        <option value="https://raw.githubusercontent.com/TheLinuxSeal/iridiumite/releases/1.0.0/main.html">
-            Example GitHub
-        </option>
+        <option value="https://raw.githubusercontent.com/TheLinuxSeal/iridiumite/releases/1.0.0/main.html">Iridiumite v1.0.0</option>
     </select>
-    <input id="iridiumiteinit-045a8ba2-i"
-           placeholder="URL"
-           style="display:none">
-    <input id="iridiumiteinit-045a8ba2-f"
-           type="file"
-           style="display:none">
-<div id="iridiumiteinit-045a8ba2-td"
-     style="display:none">
-    <textarea id="iridiumiteinit-045a8ba2-t"
-              placeholder="Paste HTML here..."
-              style="width:400px;height:120px;"></textarea><br>
-    <button id="iridiumiteinit-045a8ba2-copy"
-            onclick="
-navigator.clipboard.writeText(
-document.getElementById(
-'iridiumiteinit-045a8ba2-t'
-).value
-)">
-        Copy
-    </button>
-    <button id="iridiumiteinit-045a8ba2-paste"
-            onclick="
-(async () => {
-document.getElementById(
-'iridiumiteinit-045a8ba2-t'
-).value =
-await navigator.clipboard.readText();
-})()
-">
-        Paste
-    </button>
-</div><br>
+    <input id="iridiumiteinit-045a8ba2-i" placeholder="URL" style="display:none">
+    <input id="iridiumiteinit-045a8ba2-f" type="file" style="display:none">
+    <div id="iridiumiteinit-045a8ba2-td"
+        style="display:none">
+        <textarea id="iridiumiteinit-045a8ba2-t" placeholder="Paste HTML here..." style="width:400px;height:120px;"></textarea><br>
+        <button id="iridiumiteinit-045a8ba2-copy" onclick="navigator.clipboard.writeText(document.getElementById('iridiumiteinit-045a8ba2-t').value)">Copy</button>
+        <button id="iridiumiteinit-045a8ba2-paste" onclick="(async () => {document.getElementById('iridiumiteinit-045a8ba2-t').value = await navigator.clipboard.readText();})()">Paste</button>
+    </div><br>
 
     <!-- BOOT MODE -->
     <select id="iridiumiteinit-045a8ba2-m">
@@ -70,46 +42,23 @@ await navigator.clipboard.readText();
     <button onclick="eval(prompt('JS:'))">Eval JS Code</button>
 </div>
 <script>
-const iridiumiteinit_045a8ba2_p =
-    document.getElementById('iridiumiteinit-045a8ba2-p'),
-      iridiumiteinit_045a8ba2_jsd =
-    document.getElementById('iridiumiteinit-045a8ba2-jsd'),
-      iridiumiteinit_045a8ba2_gh =
-    document.getElementById('iridiumiteinit-045a8ba2-gh'),
-      iridiumiteinit_045a8ba2_i =
-    document.getElementById('iridiumiteinit-045a8ba2-i'),
-      iridiumiteinit_045a8ba2_f =
-    document.getElementById('iridiumiteinit-045a8ba2-f'),
-      iridiumiteinit_045a8ba2_t =
-    document.getElementById('iridiumiteinit-045a8ba2-t'),
-      iridiumiteinit_045a8ba2_m =
-    document.getElementById('iridiumiteinit-045a8ba2-m'),
-      iridiumiteinit_045a8ba2_tt =
-    document.getElementById('iridiumiteinit-045a8ba2-td');
+const iridiumiteinit_045a8ba2_p = document.getElementById('iridiumiteinit-045a8ba2-p'),
+      iridiumiteinit_045a8ba2_jsd = document.getElementById('iridiumiteinit-045a8ba2-jsd'),
+      iridiumiteinit_045a8ba2_gh = document.getElementById('iridiumiteinit-045a8ba2-gh'),
+      iridiumiteinit_045a8ba2_i = document.getElementById('iridiumiteinit-045a8ba2-i'),
+      iridiumiteinit_045a8ba2_f = document.getElementById('iridiumiteinit-045a8ba2-f'),
+      iridiumiteinit_045a8ba2_t = document.getElementById('iridiumiteinit-045a8ba2-t'),
+      iridiumiteinit_045a8ba2_m = document.getElementById('iridiumiteinit-045a8ba2-m'),
+      iridiumiteinit_045a8ba2_tt = document.getElementById('iridiumiteinit-045a8ba2-td');
+
 function iridiumiteinit_045a8ba2_updateUI() {
-    iridiumiteinit_045a8ba2_i.style.display =
-        iridiumiteinit_045a8ba2_p.value === 'custom'
-        ? 'inline'
-        : 'none';
-    iridiumiteinit_045a8ba2_f.style.display =
-        iridiumiteinit_045a8ba2_p.value === 'file'
-        ? 'inline'
-        : 'none';
-    iridiumiteinit_045a8ba2_jsd.style.display =
-        iridiumiteinit_045a8ba2_p.value === 'jsdelivr'
-        ? 'inline'
-        : 'none';
-    iridiumiteinit_045a8ba2_gh.style.display =
-        iridiumiteinit_045a8ba2_p.value === 'github'
-        ? 'inline'
-        : 'none';
-    iridiumiteinit_045a8ba2_tt.style.display =
-        iridiumiteinit_045a8ba2_p.value === 'textbox'
-        ? 'inline'
-        : 'none';
-    }
-iridiumiteinit_045a8ba2_p.onchange =
-    iridiumiteinit_045a8ba2_updateUI;
+    iridiumiteinit_045a8ba2_i.style.display = iridiumiteinit_045a8ba2_p.value === 'custom' ? 'inline' : 'none';
+    iridiumiteinit_045a8ba2_f.style.display = iridiumiteinit_045a8ba2_p.value === 'file' ? 'inline' : 'none';
+    iridiumiteinit_045a8ba2_jsd.style.display = iridiumiteinit_045a8ba2_p.value === 'jsdelivr' ? 'inline' : 'none';
+    iridiumiteinit_045a8ba2_gh.style.display = iridiumiteinit_045a8ba2_p.value === 'github' ? 'inline' : 'none';
+    iridiumiteinit_045a8ba2_tt.style.display = iridiumiteinit_045a8ba2_p.value === 'textbox' ? 'inline' : 'none';
+}
+iridiumiteinit_045a8ba2_p.onchange = iridiumiteinit_045a8ba2_updateUI;
 function iridiumiteinit_045a8ba2_idb_get() {
     return new Promise((resolve, reject) => {
         const req =
@@ -153,33 +102,18 @@ function iridiumiteinit_045a8ba2_idb_set(html) {
 async function iridiumiteinit_045a8ba2_getHTML() {
     let url = '';
     let html = '';
-    if (iridiumiteinit_045a8ba2_p.value === 'jsdelivr')
-        url = iridiumiteinit_045a8ba2_jsd.value;
-    else if (iridiumiteinit_045a8ba2_p.value === 'github')
-        url = iridiumiteinit_045a8ba2_gh.value;
-    else if (iridiumiteinit_045a8ba2_p.value === 'custom')
-        url = iridiumiteinit_045a8ba2_i.value;
+    if (iridiumiteinit_045a8ba2_p.value === 'jsdelivr') url = iridiumiteinit_045a8ba2_jsd.value;
+    else if (iridiumiteinit_045a8ba2_p.value === 'github') url = iridiumiteinit_045a8ba2_gh.value;
+    else if (iridiumiteinit_045a8ba2_p.value === 'custom') url = iridiumiteinit_045a8ba2_i.value;
     if (iridiumiteinit_045a8ba2_p.value === 'file') {
         if (!iridiumiteinit_045a8ba2_f.files[0]) {
             alert('Select file');
             return null;
         }
-        html =
-            await iridiumiteinit_045a8ba2_f.files[0].text();
-    } else if (
-        iridiumiteinit_045a8ba2_p.value === 'textbox'
-    ) {
-        html = iridiumiteinit_045a8ba2_t.value;
-    } else if (
-        iridiumiteinit_045a8ba2_p.value === 'localstorage'
-    ) {
-        html =
-            localStorage.getItem('iridiumite-html') || '';
-    } else if (
-        iridiumiteinit_045a8ba2_p.value === 'indexeddb'
-    ) {
-        html =
-            await iridiumiteinit_045a8ba2_idb_get();
+        html = await iridiumiteinit_045a8ba2_f.files[0].text();
+    } else if (iridiumiteinit_045a8ba2_p.value === 'textbox') {html = iridiumiteinit_045a8ba2_t.value;
+    } else if (iridiumiteinit_045a8ba2_p.value === 'localstorage') {html = localStorage.getItem('iridiumite-html') || '';
+    } else if (iridiumiteinit_045a8ba2_p.value === 'indexeddb') {html = await iridiumiteinit_045a8ba2_idb_get();
     } else if (
         iridiumiteinit_045a8ba2_p.value === 'console'
     ) {
@@ -279,9 +213,7 @@ sealboxinit_console_5f5760d4_b.onclick =
             const res = await fetch(url);
             html = await res.text();
         } catch (e) {
-            alert(
-                'CORS Error. Try Iframe or Navigate.'
-            );
+            alert('CORS Error. Try Iframe or Navigate.');
             return null;
         }
     }
@@ -290,18 +222,13 @@ sealboxinit_console_5f5760d4_b.onclick =
 
 
 async function iridiumiteinit_045a8ba2_boot() {
-    const html =
-        await iridiumiteinit_045a8ba2_getHTML();
+    const html = await iridiumiteinit_045a8ba2_getHTML();
     //if (html === null)
     //    return;
-    const mode =
-        iridiumiteinit_045a8ba2_m.value;
+    const mode = iridiumiteinit_045a8ba2_m.value;
     /* SAVE MODES */
     if (mode === 'save-localstorage') {
-        localStorage.setItem(
-            'iridiumite-html',
-            html
-        );
+        localStorage.setItem('iridiumite-html',html);
         alert('Saved to localStorage');
         return;
     }
@@ -315,22 +242,16 @@ async function iridiumiteinit_045a8ba2_boot() {
             new Blob([html], {
                 type: 'text/html'
             });
-        const a =
-            document.createElement('a');
-        a.href =
-            URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
         a.download = 'iridiumite.html';
         a.click();
         return;
     }
     if (mode === 'save-textbox') {
-        iridiumiteinit_045a8ba2_tt.style.display =
-            'inline';
-        iridiumiteinit_045a8ba2_t.value =
-            html;
-        alert(
-            'Saved into textbox.'
-        );
+        iridiumiteinit_045a8ba2_tt.style.display = S'inline';
+        iridiumiteinit_045a8ba2_t.value = html;
+        alert('Saved into textbox.');
         return;
     }
     /* LOAD MODES */
@@ -339,72 +260,39 @@ async function iridiumiteinit_045a8ba2_boot() {
         document.write(html);
         document.close();
     } else if (mode === 'iframe') {
-        if (html === null) {
         let src = '';
-        if (
-            iridiumiteinit_045a8ba2_p.value ===
-            'jsdelivr'
-        )
-            src =
-            iridiumiteinit_045a8ba2_jsd.value;
-        else if (
-            iridiumiteinit_045a8ba2_p.value ===
-            'github'
-        )
-            src =
-            iridiumiteinit_045a8ba2_gh.value;
-        else if (
-            iridiumiteinit_045a8ba2_p.value ===
-            'custom'
-        )
-            src =
-            iridiumiteinit_045a8ba2_i.value;
+        if ( iridiumiteinit_045a8ba2_p.value === 'jsdelivr') src = iridiumiteinit_045a8ba2_jsd.value;
+        else if ( iridiumiteinit_045a8ba2_p.value === 'github') src = iridiumiteinit_045a8ba2_gh.value;
+        else if ( iridiumiteinit_045a8ba2_p.value === 'custom') src = iridiumiteinit_045a8ba2_i.value;
+        else if ( iridiumiteinit_045a8ba2_p.value === 'console') src = "https://thelinuxseal.github.io/latest/console.html";
         document.body.innerHTML =
             '<iframe src="' +
             src +
             '" style="width:100%;height:100%;border:none"></iframe>';
-        } else {
-            document.body.innerHTML =
-            '<iframe srcdoc="' +
-            html +
-            '" style="width:100%;height:100%;border:none"></iframe>';
-        }
+    } else if (mode==="iframe-html") {
+        document.body.innerHTML =
+        '<iframe srcdoc="' +
+        html +
+        '" style="width:100%;height:100%;border:none"></iframe>';
     } else if (mode === 'blank') {
-        const win =
-            window.open('about:blank');
+        const win = window.open('about:blank');
         win.document.write(html);
     } else if (mode === 'blob') {
         const blob =
             new Blob([html], {
                 type: 'text/html'
             });
-        window.location.href =
-            URL.createObjectURL(blob);
+        window.location.href = URL.createObjectURL(blob);
 
-    } else if (mode === 'bookmarklet') {iridiumiteinit_045a8ba2_tt.style.display =
-            'inline';
+    } else if (mode === 'bookmarklet') {
+        iridiumiteinit_045a8ba2_tt.style.display = 'inline';
         iridiumiteinit_045a8ba2_t.value = `javascript:document.open();document.write(${JSON.stringify(html)});document.close();`;
-
     } else if (mode === 'nav') {
         let url = '';
-        if (
-            iridiumiteinit_045a8ba2_p.value ===
-            'jsdelivr'
-        )
-            url =
-            iridiumiteinit_045a8ba2_jsd.value;
-        else if (
-            iridiumiteinit_045a8ba2_p.value ===
-            'github'
-        )
-            url =
-            iridiumiteinit_045a8ba2_gh.value;
-        else if (
-            iridiumiteinit_045a8ba2_p.value ===
-            'custom'
-        )
-            url =
-            iridiumiteinit_045a8ba2_i.value;
+        if (iridiumiteinit_045a8ba2_p.value === 'jsdelivr' ) url = iridiumiteinit_045a8ba2_jsd.value;
+        else if (iridiumiteinit_045a8ba2_p.value === 'github') url = iridiumiteinit_045a8ba2_gh.value;
+        else if ( iridiumiteinit_045a8ba2_p.value === 'custom') url = iridiumiteinit_045a8ba2_i.value;
+        else if ( iridiumiteinit_045a8ba2_p.value === 'console') url = "https://thelinuxseal.github.io/latest/console.html";
         window.location.href = url;
     }
 }
